@@ -19,8 +19,13 @@ switch = input("Press Enter to switch on! : ").lower()
 
 # For admin to check resources.
 def admin():
-    if switch == "admin":
-        print(coffee_m_resources.items())
+    print("\nResources:\n"
+          f"Water: {coffee_m_resources['water']}ml\n"
+          f"Coffee: {coffee_m_resources['coffee']}g\n"
+          f"Sugar: {coffee_m_resources['sugar']}g\n"
+          f"Milk: {coffee_m_resources['milk']}ml\n")
+    exit()
+
 
 # Function to display the coffee menu.
 def display_menu():
@@ -62,24 +67,49 @@ def prepare_drink(drink):
             coffee_m_resources[ingredient] -= amount  # Deduct used ingredients
             print(f"{ingredient} used: {amount}ml/g")
 
-    time.sleep(2)
-    print(f"\n{drink['name']} is ready! Price: R{float(drink['price']):.2f}")
+    time.sleep(3)
+    print(f"\n{drink['name']} is ready!")
+
+
+def cash_change(drink):
+    print(f"Price: R{float(drink['price']):.2f}")
+    cash = float(input("Type Amount: R "))
+    change = cash - float(drink['price'])
+    if change >= 0:
+        print(f"\nReturning change: R{change:.2f}")
+        print("Thank you for ordering! Enjoy your day!\n")
+        return change
+    else:
+        print("Insufficient funds. Please insert more money.")
+        print(f"Required : R{change}")
+        return None
 
 
 # Main coffee machine function to control the flow.
 def coffee_machine():
-    if switch == "":
-        display_menu()                  # Display menu.
-        choice = get_user_choice()      # Get user choice.
+    while True:
+        if switch == "":
+            display_menu()                  # Display menu.
+            choice = get_user_choice()      # Get user choice.
 
-        if choice is not None:
-            drink = beverages[choice]
+            if choice is not None:
+                drink = beverages[choice]
 
-            # Check if enough resources are available
-            if resource_check(drink):
-                prepare_drink(drink)
-            else:
-                print(f"Cannot prepare {drink['name']} due to insufficient resources.")
+                # Check if enough resources are available
+                if resource_check(drink):
+                    prepare_drink(drink)
+                    cash_change(drink)
+                    break
+                else:
+                    print(f"Cannot prepare {drink['name']} due to insufficient resources.")
+                    continue
+
+        elif switch == "admin":
+            admin()
+
+        else:
+            print("Switching off.")
+            break
 
 
 # Call the main coffee machine function.
